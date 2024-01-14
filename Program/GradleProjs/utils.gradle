@@ -1,0 +1,96 @@
+//utils.gradle中定义了一个获取AndroidManifests.xmlversionName的函数
+def getVersionNameAdvanced(){
+    //下面这行代码中的project是谁？
+    def xmlPath = rootProject.getRootDir().getAbsolutePath() + "/AndroidManifest.xml"
+    def xmlFile = project.file(xmlPath)
+    def rootManifest = new XmlSlurper().parse(xmlFile)
+    return rootManifest['@android:versionName']
+}
+
+def getSTLArg(){
+//    def stl = '-DANDROID_STL=c++_static'
+    def stl = '-DANDROID_STL=gnustl_static'
+    return stl
+}
+
+def getShareSTLArg(){
+    def stl = '-DANDROID_STL=gnustl_shared'
+    return stl
+}
+
+def getToolChain(){
+    def tool = '-DANDROID_TOOLCHAIN=clang'
+//    def tool = '-DANDROID_TOOLCHAIN=gcc'
+    return tool
+}
+
+//APK输出目录
+def getAppPublishDir(){
+    def dir = 'E:/XGameAPK'
+    return dir
+}
+
+////////////注意！！！！////////////
+////////乐变版本迭代专用版本号////////
+def getLeBianVersionCode(){
+    def leBianCode = 900
+    return leBianCode
+}
+
+def getLeBianUpdateShowVersionCode(){
+    def leBianCode = '1.0.900'
+    return leBianCode
+}
+
+////如非特殊需要不建议更改这个版本号////
+def getAppVersionCode(){
+    def code = 515
+    return code
+}
+
+////如非特殊需要不建议更改这个版本号////
+def getAppVersionName(){
+    def name = '1.0.515'
+    return name
+}
+
+//发布版本关闭debug//
+def getApkDebugTag(){
+    def tag = false
+    return tag
+}
+
+//编译输出ABI
+def getAbiFilters(){
+    //'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+    def abi = ['armeabi-v7a', 'arm64-v8a']
+    return abi
+}
+
+//最终打包进APK的ABI
+def getAbiFiltersTarget(){
+    //'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+    def abi = ['armeabi-v7a', 'arm64-v8a']
+    return abi
+}
+
+
+//现在，想把这个API输出到各个Project。由于这个utils.gradle会被每一个Project Apply，所以
+//我可以把getVersionNameAdvanced定义成一个closure，然后赋值到一个外部属性
+//下面的ext是谁的ext？
+ext{ //此段花括号中代码是闭包
+    //除了ext.xxx=value这种定义方法外，还可以使用ext{}这种书写方法。
+    //ext{}不是ext(Closure)对应的函数调用。但是ext{}中的{}确实是闭包。
+    getVersionNameAdvanced = this.&getVersionNameAdvanced
+    getSTLArg = this.&getSTLArg
+    getToolChain = this.&getToolChain
+    getShareSTLArg = this.&getShareSTLArg
+    getAppPublishDir = this.&getAppPublishDir
+    getAppVersionCode = this.&getAppVersionCode
+    getAppVersionName = this.&getAppVersionName
+    getApkDebugTag = this.&getApkDebugTag
+    getLeBianVersionCode = this.&getLeBianVersionCode
+    getAbiFilters = this.&getAbiFilters
+    getAbiFiltersTarget = this.&getAbiFiltersTarget
+    getLeBianUpdateShowVersionCode = this.&getLeBianUpdateShowVersionCode
+}

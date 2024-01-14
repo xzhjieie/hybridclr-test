@@ -1,0 +1,2 @@
+include ':app', ':libUV', ':libuv', ':libsimplenet', ':libEsShare', ':libRaceTool', ':libCommonShare', ':libTask', ':libTable', ':libBaseRace', ':libRaceLogic', ':ClientDll', ':libPathFinder', ':liblebian_open_for_AS'
+project(':liblebian_open_for_AS').projectDir = new File('lebian_open_for_AS')

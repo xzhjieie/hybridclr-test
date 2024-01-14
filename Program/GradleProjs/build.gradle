@@ -1,0 +1,53 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        maven{ url = "http://maven.aliyun.com/nexus/content/groups/public/" }
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        maven{ url = "http://maven.aliyun.com/nexus/content/groups/public/" }
+        google()
+        jcenter()
+    }
+}
+
+def cleanLibPath = [
+        "app",
+        "libBaseRace",
+        "libCommonShare",
+        "libEngine",
+        "libEsShare",
+        "libPathFinder",
+        "libRaceLogic",
+        "libRaceTool",
+        "libTable",
+        "libTask",
+        "libuv",
+        "libSimpleNet",
+]
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+
+    def cleanRootPath = rootProject.getProjectDir().toString()
+
+    for (int i = 0; i < cleanLibPath.size(); i++) {
+        def pathA = cleanRootPath + "/" + cleanLibPath[i] + "/build"
+        def pathB = cleanRootPath + "/" + cleanLibPath[i] + "/.externalNativeBuild"
+        delete file(pathA)
+        delete file(pathB)
+    }
+}

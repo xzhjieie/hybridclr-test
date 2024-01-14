@@ -1,0 +1,1 @@
+gradlew clean & gradlew :libEsShare:assembleRelease :libRaceTool:assembleRelease :libRaceTool:assembleRelease :libsimplenet:assembleRelease :libCommonShare:assembleRelease :libTask:assembleRelease :libPathFinder:assembleRelease :libTable:assembleRelease :libBaseRace:assembleRelease :libRaceLogic:assembleRelease :ClientDll:assembleRelease

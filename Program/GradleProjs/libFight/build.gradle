@@ -1,0 +1,86 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
+
+def stlArg = getSTLArg()
+def toolChain = getToolChain()
+def abis = getAbiFilters()
+
+
+def srclientSO = "/build/intermediates/cmake/release/obj/armeabi-v7a/libClient.so"
+def unityassertclientSO = "${rootProject.getRootDir().getAbsolutePath()}/../../ClientPublish/Bin/Assets/Plugins/Android/libs/armeabi-v7a/libClientDLL.so"
+def srclientSO64 = "/build/intermediates/cmake/release/obj/arm64-v8a/libClient.so"
+def unityassertclientSO64 = "${rootProject.getRootDir().getAbsolutePath()}/../../ClientPublish/Bin/Assets/Plugins/Android/libs/arm64-v8a/libClientDLL.so"
+
+println("${unityassertclientSO}")
+
+
+project.afterEvaluate{
+    println("afterEvaluate")
+    tasks.getByName("compileReleaseSources"){
+        it.doLast {
+            println("compileReleaseSources")
+            def srcFile = new File("${project.getProjectDir().absolutePath}${srclientSO}")
+            def targetBackupFile = new File("${unityassertclientSO}")
+            targetBackupFile.withOutputStream { os ->
+                srcFile.withInputStream { ins ->
+                    os << ins
+                }
+            }
+			
+			println("compileReleaseSources64")
+            def srcFile64 = new File("${project.getProjectDir().absolutePath}${srclientSO64}")
+            def targetBackupFile64 = new File("${unityassertclientSO64}")
+            targetBackupFile64.withOutputStream { os ->
+                srcFile64.withInputStream { ins ->
+                    os << ins
+                }
+            }
+        }
+    }
+}
+
+android {
+    publishNonDefault true
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                //abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+                for(abi in abis){
+                    abiFilters abi
+                }
+                //https://developer.android.com/ndk/guides/cmake.html#variables
+                arguments toolChain,stlArg,'-DANDROID_ARM_MODE=arm','-DANDROID_ARM_NEON=TRUE'
+                cFlags '-std=c11'
+                cppFlags '-std=c++11', '-fpic', '-fstack-protector', '-frtti', '-fexceptions'
+                targets "Client"
+            }
+        }
+    }
+    buildTypes {
+        release {
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled true
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+           path "CMakeLists.txt"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+}
